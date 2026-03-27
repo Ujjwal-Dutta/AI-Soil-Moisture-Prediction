@@ -1,20 +1,25 @@
-# AI-Based Soil Moisture Prediction
+# AI-Based Soil Moisture Prediction Using Multi-Sensor Satellite Data
 
-This project predicts soil moisture using AI models and satellite data.
+##  Project Overview
+This project implements a multi-sensor data fusion approach using Sentinel-1 (SAR) and Sentinel-2 (Optical) satellite data to predict soil moisture using Machine Learning models (Random Forest & XGBoost).
 
-## Technologies Used
+##  Technology Stack
+- Google Earth Engine
 - Python
-- Machine Learning
-- Satellite Data (Sentinel, MODIS, SMAP)
+- Scikit-learn
+- XGBoost
+- Streamlit
 
-## Features
-- Soil moisture prediction
-- Environmental data analysis
-- Precision agriculture support
+##  Models Used
+- Random Forest Regression
+- XGBoost Regression
 
-## Dataset
-Satellite environmental datasets.
+##  Evaluation Metrics
+- RMSE
+- MAE
+- R² Score
 
-## How to Run
-1. Install requirements
-2. Run train_model.py
+##  Application
+- Precision Agriculture
+- Drought Monitoring
+- Water Resource Management
