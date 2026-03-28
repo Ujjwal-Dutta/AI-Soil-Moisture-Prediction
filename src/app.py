@@ -69,7 +69,10 @@ row_id = st.slider(
 )
 
 # Use only selected features
-sample = data.loc[[row_id], selected_features]
+sample = data[selected_features].iloc[[row_id]]
+
+# Ensure exact column alignment
+sample = sample.reindex(columns=selected_features)
 
 st.subheader("Selected Input Features")
 st.dataframe(sample)
