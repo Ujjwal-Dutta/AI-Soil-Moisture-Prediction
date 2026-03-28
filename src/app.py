@@ -78,9 +78,9 @@ st.subheader("Selected Input Features")
 st.dataframe(sample)
 
 # -----------------------------
-# Prediction
+# Prediction (FINAL FIX)
 # -----------------------------
-prediction = model.predict(sample)
+prediction = model.predict(sample.values)
 
 st.subheader("🌍 Predicted Soil Moisture")
 st.success(f"Soil Moisture Value: {prediction[0]:.3f}")
