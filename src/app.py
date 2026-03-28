@@ -17,7 +17,7 @@ data_path = os.path.join(BASE_DIR, "docs", "data", "processed_data.csv")
 # Google Drive File IDs
 # -----------------------------
 FILES = {
-    model_path: "1cr9VJ_ofMxbJpLcTwMsbSj6_dtNfA2OX",   # model
+     model_path: "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf",   # model
     feature_path: "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M", # features
     data_path: "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"      # dataset
 }
