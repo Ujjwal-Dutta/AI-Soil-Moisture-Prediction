@@ -25,7 +25,7 @@ FILES = {
 # -----------------------------
 # Download files if missing
 # -----------------------------
-os.makedirs(os.path.join(BASE_DIR, "docs", "data"), exist_ok=True)
+os.makedirs(os.path.dirname(data_path), exist_ok=True)
 
 for path, file_id in FILES.items():
     if not os.path.exists(path):
@@ -59,39 +59,47 @@ st.subheader("📊 Satellite Dataset Preview")
 st.dataframe(data.head())
 
 # -----------------------------
-# User Selection
+# Validate feature compatibility
 # -----------------------------
-row_id = st.slider(
-    "Select Sample Index",
-    0,
-    len(data) - 1,
-    0
-)
+missing_cols = [col for col in selected_features if col not in data.columns]
 
-# Use only selected features
-sample = data[selected_features].iloc[[row_id]]
+if missing_cols:
+    st.error(f"Dataset is missing these required features: {missing_cols}")
+else:
+    # -----------------------------
+    # User Selection
+    # -----------------------------
+    row_id = st.slider(
+        "Select Sample Index",
+        0,
+        len(data) - 1,
+        0
+    )
 
-# Ensure exact column alignment
-sample = sample.reindex(columns=selected_features)
+    # -----------------------------
+    # Prepare input
+    # -----------------------------
+    sample = data[selected_features].iloc[[row_id]]
+    sample = sample.reindex(columns=selected_features)
 
-st.subheader("Selected Input Features")
-st.dataframe(sample)
+    st.subheader("Selected Input Features")
+    st.dataframe(sample)
 
-# -----------------------------
-# Prediction (FINAL FIX)
-# -----------------------------
-prediction = model.predict(sample.values)
+    # -----------------------------
+    # Prediction
+    # -----------------------------
+    prediction = model.predict(sample)
 
-st.subheader("🌍 Predicted Soil Moisture")
-st.success(f"Soil Moisture Value: {prediction[0]:.3f}")
+    st.subheader("🌍 Predicted Soil Moisture")
+    st.success(f"Soil Moisture Value: {prediction[0]:.3f}")
 
-# -----------------------------
-# Visualization
-# -----------------------------
-st.subheader("NDVI Distribution")
-if "NDVI" in data.columns:
-    st.bar_chart(data["NDVI"])
+    # -----------------------------
+    # Visualization
+    # -----------------------------
+    st.subheader("NDVI Distribution")
+    if "NDVI" in data.columns:
+        st.bar_chart(data["NDVI"])
 
-st.subheader("VV Backscatter Distribution")
-if "VV" in data.columns:
-    st.line_chart(data["VV"])
+    st.subheader("VV Backscatter Distribution")
+    if "VV" in data.columns:
+        st.line_chart(data["VV"])
