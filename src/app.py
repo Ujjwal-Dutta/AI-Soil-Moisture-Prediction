@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
-import urllib.request
+import gdown
 
 # -----------------------------
 # Streamlit Page Config
@@ -42,21 +42,6 @@ data_path = os.path.join(
 )
 
 # -----------------------------
-# Google Drive File IDs
-# -----------------------------
-MODEL_FILE_ID = "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf"
-
-FEATURE_FILE_ID = "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M"
-
-DATA_FILE_ID = "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"
-
-FILES = {
-    model_path: MODEL_FILE_ID,
-    feature_path: FEATURE_FILE_ID,
-    data_path: DATA_FILE_ID
-}
-
-# -----------------------------
 # Create Required Directories
 # -----------------------------
 os.makedirs(
@@ -75,9 +60,37 @@ os.makedirs(
 )
 
 # -----------------------------
+# Google Drive Share Links
+# -----------------------------
+
+# best_model.pkl (NEW LINK)
+MODEL_URL = (
+    "https://drive.google.com/file/d/"
+    "1BlzKNSX2WPsYsISQAYau0CLuBoPSa-MF/view?usp=drive_link"
+)
+
+# feature_columns.pkl
+FEATURE_URL = (
+    "https://drive.google.com/file/d/"
+    "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M/view?usp=sharing"
+)
+
+# processed_data.csv
+DATA_URL = (
+    "https://drive.google.com/file/d/"
+    "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh/view?usp=sharing"
+)
+
+URLS = {
+    model_path: MODEL_URL,
+    feature_path: FEATURE_URL,
+    data_path: DATA_URL
+}
+
+# -----------------------------
 # Download Files If Missing
 # -----------------------------
-for path, file_id in FILES.items():
+for path, url in URLS.items():
 
     if not os.path.exists(path):
 
@@ -87,16 +100,11 @@ for path, file_id in FILES.items():
 
             try:
 
-                # Google Drive Direct Download URL
-                url = (
-                    "https://drive.google.com/uc?export=download&confirm=t&id="
-                    + file_id
-                )
-
-                # Download File
-                urllib.request.urlretrieve(
-                    url,
-                    path
+                gdown.cached_download(
+                    url=url,
+                    path=path,
+                    quiet=False,
+                    fuzzy=True
                 )
 
             except Exception as e:
