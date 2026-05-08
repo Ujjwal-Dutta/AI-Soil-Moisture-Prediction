@@ -15,12 +15,18 @@ st.set_page_config(
 # -----------------------------
 # Base Directory
 # -----------------------------
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
 
 # -----------------------------
 # File Paths
 # -----------------------------
-model_path = os.path.join(BASE_DIR, "docs", "best_model.pkl")
+model_path = os.path.join(
+    BASE_DIR,
+    "docs",
+    "best_model.pkl"
+)
 
 feature_path = os.path.join(
     BASE_DIR,
@@ -38,6 +44,7 @@ data_path = os.path.join(
 # -----------------------------
 # Google Drive File IDs
 # -----------------------------
+
 # best_model.pkl
 MODEL_FILE_ID = "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf"
 
@@ -47,6 +54,9 @@ FEATURE_FILE_ID = "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M"
 # processed_data.csv
 DATA_FILE_ID = "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"
 
+# -----------------------------
+# File Mapping
+# -----------------------------
 FILES = {
     model_path: MODEL_FILE_ID,
     feature_path: FEATURE_FILE_ID,
@@ -56,7 +66,10 @@ FILES = {
 # -----------------------------
 # Create Required Directories
 # -----------------------------
-os.makedirs(os.path.dirname(model_path), exist_ok=True)
+os.makedirs(
+    os.path.dirname(model_path),
+    exist_ok=True
+)
 
 os.makedirs(
     os.path.dirname(feature_path),
@@ -80,24 +93,33 @@ for path, file_id in FILES.items():
         ):
 
             try:
+
+                # Google Drive Direct Download URL
+                url = (
+                    f"https://drive.google.com/uc?id={file_id}"
+                )
+
+                # Download File
                 gdown.download(
-                    id=file_id,
-                    output=path,
-                    quiet=False,
-                    fuzzy=True
+                    url,
+                    path,
+                    quiet=False
                 )
 
             except Exception as e:
+
                 st.error(
                     f"Failed to download "
                     f"{os.path.basename(path)}: {e}"
                 )
+
                 st.stop()
 
 # -----------------------------
 # Load Model + Features
 # -----------------------------
 try:
+
     model = joblib.load(model_path)
 
     selected_features = joblib.load(
@@ -105,11 +127,15 @@ try:
     )
 
 except Exception as e:
-    st.error(f"Error loading model files: {e}")
+
+    st.error(
+        f"Error loading model files: {e}"
+    )
+
     st.stop()
 
 # -----------------------------
-# Title
+# App Title
 # -----------------------------
 st.title(
     "🌱 AI-Based Soil Moisture Prediction System"
@@ -118,17 +144,22 @@ st.title(
 st.write("""
 This dashboard predicts soil moisture using
 Sentinel-1 SAR and Sentinel-2 satellite data
-with Machine Learning.
+with Machine Learning techniques.
 """)
 
 # -----------------------------
 # Load Dataset
 # -----------------------------
 try:
+
     data = pd.read_csv(data_path)
 
 except Exception as e:
-    st.error(f"Error loading dataset: {e}")
+
+    st.error(
+        f"Error loading dataset: {e}"
+    )
+
     st.stop()
 
 # -----------------------------
@@ -146,7 +177,7 @@ st.subheader("📊 Dataset Preview")
 st.dataframe(data.head())
 
 # -----------------------------
-# Feature Validation
+# Validate Features
 # -----------------------------
 missing_cols = [
     col for col in selected_features
@@ -163,9 +194,11 @@ if missing_cols:
     st.stop()
 
 # -----------------------------
-# Sample Selection
+# User Input Selection
 # -----------------------------
-st.subheader("🎛 Select Input Sample")
+st.subheader(
+    "🎛 Select Input Sample"
+)
 
 row_id = st.slider(
     "Select Sample Index",
@@ -184,7 +217,7 @@ sample = sample.reindex(
 )
 
 # -----------------------------
-# Display Features
+# Display Selected Features
 # -----------------------------
 st.subheader(
     "🛰 Selected Input Features"
@@ -210,12 +243,16 @@ try:
 
 except Exception as e:
 
-    st.error(f"Prediction failed: {e}")
+    st.error(
+        f"Prediction failed: {e}"
+    )
 
 # -----------------------------
 # Visualizations
 # -----------------------------
-st.subheader("📈 NDVI Distribution")
+st.subheader(
+    "📈 NDVI Distribution"
+)
 
 if "NDVI" in data.columns:
 
@@ -223,7 +260,9 @@ if "NDVI" in data.columns:
 
 else:
 
-    st.warning("NDVI column not found.")
+    st.warning(
+        "NDVI column not found."
+    )
 
 st.subheader(
     "📉 VV Backscatter Distribution"
@@ -235,7 +274,9 @@ if "VV" in data.columns:
 
 else:
 
-    st.warning("VV column not found.")
+    st.warning(
+        "VV column not found."
+    )
 
 # -----------------------------
 # Footer
