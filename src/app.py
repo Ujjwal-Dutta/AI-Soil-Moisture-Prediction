@@ -87,11 +87,13 @@ for path, file_id in FILES.items():
 
             try:
 
+                # Google Drive Direct Download URL
                 url = (
-                    "https://drive.google.com/uc?export=download&id="
+                    "https://drive.google.com/uc?export=download&confirm=t&id="
                     + file_id
                 )
 
+                # Download File
                 urllib.request.urlretrieve(
                     url,
                     path
