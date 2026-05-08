@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 import os
-import gdown
 
 # -----------------------------
 # Streamlit Page Config
@@ -42,72 +41,6 @@ data_path = os.path.join(
 )
 
 # -----------------------------
-# Google Drive File IDs
-# -----------------------------
-MODEL_FILE_ID = "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf"
-
-FEATURE_FILE_ID = "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M"
-
-DATA_FILE_ID = "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"
-
-FILES = {
-    model_path: MODEL_FILE_ID,
-    feature_path: FEATURE_FILE_ID,
-    data_path: DATA_FILE_ID
-}
-
-# -----------------------------
-# Create Required Directories
-# -----------------------------
-os.makedirs(
-    os.path.dirname(model_path),
-    exist_ok=True
-)
-
-os.makedirs(
-    os.path.dirname(feature_path),
-    exist_ok=True
-)
-
-os.makedirs(
-    os.path.dirname(data_path),
-    exist_ok=True
-)
-
-# -----------------------------
-# Download Files If Missing
-# -----------------------------
-for path, file_id in FILES.items():
-
-    if not os.path.exists(path):
-
-        with st.spinner(
-            f"Downloading {os.path.basename(path)}..."
-        ):
-
-            try:
-
-                url = (
-                    "https://drive.google.com/uc?export=download&id="
-                    + file_id
-                )
-
-                gdown.download(
-                    url,
-                    path,
-                    quiet=False
-                )
-
-            except Exception as e:
-
-                st.error(
-                    f"Failed to download "
-                    f"{os.path.basename(path)}: {e}"
-                )
-
-                st.stop()
-
-# -----------------------------
 # Load Model + Features
 # -----------------------------
 try:
@@ -127,7 +60,7 @@ except Exception as e:
     st.stop()
 
 # -----------------------------
-# App Title
+# Title
 # -----------------------------
 st.title(
     "🌱 AI-Based Soil Moisture Prediction System"
@@ -136,7 +69,7 @@ st.title(
 st.write("""
 This dashboard predicts soil moisture using
 Sentinel-1 SAR and Sentinel-2 satellite data
-with Machine Learning.
+with Machine Learning techniques.
 """)
 
 # -----------------------------
@@ -155,7 +88,7 @@ except Exception as e:
     st.stop()
 
 # -----------------------------
-# Keep Numeric Columns Only
+# Keep Numeric Columns
 # -----------------------------
 data = data.select_dtypes(
     include=["number"]
@@ -169,7 +102,7 @@ st.subheader("📊 Dataset Preview")
 st.dataframe(data.head())
 
 # -----------------------------
-# Feature Validation
+# Validate Features
 # -----------------------------
 missing_cols = [
     col for col in selected_features
@@ -209,7 +142,7 @@ sample = sample.reindex(
 )
 
 # -----------------------------
-# Display Input Features
+# Display Features
 # -----------------------------
 st.subheader(
     "🛰 Selected Input Features"
@@ -240,7 +173,7 @@ except Exception as e:
     )
 
 # -----------------------------
-# Visualizations
+# Charts
 # -----------------------------
 st.subheader(
     "📈 NDVI Distribution"
