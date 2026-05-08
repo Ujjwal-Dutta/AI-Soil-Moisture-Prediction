@@ -44,19 +44,12 @@ data_path = os.path.join(
 # -----------------------------
 # Google Drive File IDs
 # -----------------------------
-
-# best_model.pkl
 MODEL_FILE_ID = "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf"
 
-# feature_columns.pkl
 FEATURE_FILE_ID = "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M"
 
-# processed_data.csv
 DATA_FILE_ID = "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"
 
-# -----------------------------
-# File Mapping
-# -----------------------------
 FILES = {
     model_path: MODEL_FILE_ID,
     feature_path: FEATURE_FILE_ID,
@@ -94,12 +87,11 @@ for path, file_id in FILES.items():
 
             try:
 
-                # Google Drive Direct Download URL
                 url = (
-                    f"https://drive.google.com/uc?id={file_id}"
+                    "https://drive.google.com/uc?export=download&id="
+                    + file_id
                 )
 
-                # Download File
                 gdown.download(
                     url,
                     path,
@@ -144,7 +136,7 @@ st.title(
 st.write("""
 This dashboard predicts soil moisture using
 Sentinel-1 SAR and Sentinel-2 satellite data
-with Machine Learning techniques.
+with Machine Learning.
 """)
 
 # -----------------------------
@@ -163,7 +155,7 @@ except Exception as e:
     st.stop()
 
 # -----------------------------
-# Keep Only Numeric Columns
+# Keep Numeric Columns Only
 # -----------------------------
 data = data.select_dtypes(
     include=["number"]
@@ -177,7 +169,7 @@ st.subheader("📊 Dataset Preview")
 st.dataframe(data.head())
 
 # -----------------------------
-# Validate Features
+# Feature Validation
 # -----------------------------
 missing_cols = [
     col for col in selected_features
@@ -194,7 +186,7 @@ if missing_cols:
     st.stop()
 
 # -----------------------------
-# User Input Selection
+# User Sample Selection
 # -----------------------------
 st.subheader(
     "🎛 Select Input Sample"
@@ -217,7 +209,7 @@ sample = sample.reindex(
 )
 
 # -----------------------------
-# Display Selected Features
+# Display Input Features
 # -----------------------------
 st.subheader(
     "🛰 Selected Input Features"
