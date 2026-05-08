@@ -5,58 +5,6 @@ import os
 import gdown
 
 # -----------------------------
-# Base Directory
-# -----------------------------
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# -----------------------------
-# File Paths
-# -----------------------------
-model_path = os.path.join(BASE_DIR, "docs", "best_model.pkl")
-feature_path = os.path.join(BASE_DIR, "docs", "feature_columns.pkl")
-data_path = os.path.join(BASE_DIR, "docs", "data", "processed_data.csv")
-
-# -----------------------------
-# Google Drive File IDs
-# -----------------------------
-FILES = {
-    model_path: "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf",
-    feature_path: "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M",
-    data_path: "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"
-}
-
-# -----------------------------
-# Create Required Directories
-# -----------------------------
-os.makedirs(os.path.dirname(model_path), exist_ok=True)
-os.makedirs(os.path.dirname(feature_path), exist_ok=True)
-os.makedirs(os.path.dirname(data_path), exist_ok=True)
-
-# -----------------------------
-# Download Files If Missing
-# -----------------------------
-for path, file_id in FILES.items():
-    if not os.path.exists(path):
-        with st.spinner(f"Downloading {os.path.basename(path)}..."):
-            gdown.download(
-                id=file_id,
-                output=path,
-                quiet=False,
-                fuzzy=True
-            )
-
-# -----------------------------
-# Load Model + Feature Columns
-# -----------------------------
-try:
-    model = joblib.load(model_path)
-    selected_features = joblib.load(feature_path)
-
-except Exception as e:
-    st.error(f"Error loading model files: {e}")
-    st.stop()
-
-# -----------------------------
 # Streamlit Page Config
 # -----------------------------
 st.set_page_config(
@@ -65,13 +13,112 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Title + Description
+# Base Directory
 # -----------------------------
-st.title("🌱 AI-Based Soil Moisture Prediction System")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# -----------------------------
+# File Paths
+# -----------------------------
+model_path = os.path.join(BASE_DIR, "docs", "best_model.pkl")
+
+feature_path = os.path.join(
+    BASE_DIR,
+    "docs",
+    "feature_columns.pkl"
+)
+
+data_path = os.path.join(
+    BASE_DIR,
+    "docs",
+    "data",
+    "processed_data.csv"
+)
+
+# -----------------------------
+# Google Drive File IDs
+# -----------------------------
+# best_model.pkl
+MODEL_FILE_ID = "1xP2sVtuFsR8OIj3ByDKcL3hYeLN4rVZf"
+
+# feature_columns.pkl
+FEATURE_FILE_ID = "11k67yTAlSnZ8gOyy_MwV9vdlt83Dqq1M"
+
+# processed_data.csv
+DATA_FILE_ID = "13ttpzkJ6i1X5RMJpIx1_k8ejxbQ7xfVh"
+
+FILES = {
+    model_path: MODEL_FILE_ID,
+    feature_path: FEATURE_FILE_ID,
+    data_path: DATA_FILE_ID
+}
+
+# -----------------------------
+# Create Required Directories
+# -----------------------------
+os.makedirs(os.path.dirname(model_path), exist_ok=True)
+
+os.makedirs(
+    os.path.dirname(feature_path),
+    exist_ok=True
+)
+
+os.makedirs(
+    os.path.dirname(data_path),
+    exist_ok=True
+)
+
+# -----------------------------
+# Download Files If Missing
+# -----------------------------
+for path, file_id in FILES.items():
+
+    if not os.path.exists(path):
+
+        with st.spinner(
+            f"Downloading {os.path.basename(path)}..."
+        ):
+
+            try:
+                gdown.download(
+                    id=file_id,
+                    output=path,
+                    quiet=False,
+                    fuzzy=True
+                )
+
+            except Exception as e:
+                st.error(
+                    f"Failed to download "
+                    f"{os.path.basename(path)}: {e}"
+                )
+                st.stop()
+
+# -----------------------------
+# Load Model + Features
+# -----------------------------
+try:
+    model = joblib.load(model_path)
+
+    selected_features = joblib.load(
+        feature_path
+    )
+
+except Exception as e:
+    st.error(f"Error loading model files: {e}")
+    st.stop()
+
+# -----------------------------
+# Title
+# -----------------------------
+st.title(
+    "🌱 AI-Based Soil Moisture Prediction System"
+)
 
 st.write("""
-This dashboard predicts soil moisture using Sentinel-1 SAR and Sentinel-2 Optical satellite data
-with Machine Learning techniques.
+This dashboard predicts soil moisture using
+Sentinel-1 SAR and Sentinel-2 satellite data
+with Machine Learning.
 """)
 
 # -----------------------------
@@ -87,12 +134,15 @@ except Exception as e:
 # -----------------------------
 # Keep Only Numeric Columns
 # -----------------------------
-data = data.select_dtypes(include=["number"])
+data = data.select_dtypes(
+    include=["number"]
+)
 
 # -----------------------------
 # Dataset Preview
 # -----------------------------
-st.subheader("📊 Satellite Dataset Preview")
+st.subheader("📊 Dataset Preview")
+
 st.dataframe(data.head())
 
 # -----------------------------
@@ -104,11 +154,16 @@ missing_cols = [
 ]
 
 if missing_cols:
-    st.error(f"Dataset is missing required features: {missing_cols}")
+
+    st.error(
+        f"Dataset missing required features: "
+        f"{missing_cols}"
+    )
+
     st.stop()
 
 # -----------------------------
-# User Sample Selection
+# Sample Selection
 # -----------------------------
 st.subheader("🎛 Select Input Sample")
 
@@ -124,27 +179,37 @@ row_id = st.slider(
 # -----------------------------
 sample = data[selected_features].iloc[[row_id]]
 
-sample = sample.reindex(columns=selected_features)
+sample = sample.reindex(
+    columns=selected_features
+)
 
 # -----------------------------
-# Display Selected Features
+# Display Features
 # -----------------------------
-st.subheader("🛰 Selected Input Features")
+st.subheader(
+    "🛰 Selected Input Features"
+)
+
 st.dataframe(sample)
 
 # -----------------------------
 # Prediction
 # -----------------------------
 try:
+
     prediction = model.predict(sample)
 
-    st.subheader("🌍 Predicted Soil Moisture")
+    st.subheader(
+        "🌍 Predicted Soil Moisture"
+    )
 
     st.success(
-        f"Predicted Soil Moisture Value: {prediction[0]:.4f}"
+        f"Soil Moisture Value: "
+        f"{prediction[0]:.4f}"
     )
 
 except Exception as e:
+
     st.error(f"Prediction failed: {e}")
 
 # -----------------------------
@@ -153,21 +218,31 @@ except Exception as e:
 st.subheader("📈 NDVI Distribution")
 
 if "NDVI" in data.columns:
+
     st.bar_chart(data["NDVI"])
+
 else:
+
     st.warning("NDVI column not found.")
 
-st.subheader("📉 VV Backscatter Distribution")
+st.subheader(
+    "📉 VV Backscatter Distribution"
+)
 
 if "VV" in data.columns:
+
     st.line_chart(data["VV"])
+
 else:
+
     st.warning("VV column not found.")
 
 # -----------------------------
 # Footer
 # -----------------------------
 st.markdown("---")
-st.markdown(
-    "Developed using Sentinel-1 SAR, Sentinel-2 NDVI, and Machine Learning."
-)
+
+st.markdown("""
+Developed using Sentinel-1 SAR,
+Sentinel-2 NDVI, and Machine Learning.
+""")
