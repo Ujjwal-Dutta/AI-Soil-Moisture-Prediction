@@ -103,8 +103,7 @@ for path, url in URLS.items():
                 gdown.cached_download(
                     url=url,
                     path=path,
-                    quiet=False,
-                    fuzzy=True
+                    quiet=False
                 )
 
             except Exception as e:
